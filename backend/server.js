@@ -18,8 +18,8 @@ const PORT = process.env.PORT || 3000;
 let players = [];
 let scores = {};
 let currentJudge = null;
+let submittedLinks = [];
 
-// Handle socket connections
 io.on("connection", (socket) => {
     console.log("A player connected:", socket.id);
 
@@ -30,19 +30,23 @@ io.on("connection", (socket) => {
             scores[playerName] = scores[playerName] || 0;
         }
 
-        // Assign judge if this is the first player
         if (!currentJudge) {
             currentJudge = playerName;
         }
 
-        // Send updated player list to everyone
         io.emit("updatePlayers", { players, scores, currentJudge });
     });
 
-    // Handle player disconnection
+    // **NEW: Handle link submission**
+    socket.on("submitLink", (data) => {
+        submittedLinks.push({ player: data.playerName, link: data.link });
+
+        // Notify the judge that links are submitted
+        io.to(currentJudge).emit("linksSubmitted", { count: submittedLinks.length });
+    });
+
     socket.on("disconnect", () => {
         console.log("A player disconnected:", socket.id);
-        // TODO: Handle player leaving logic
     });
 });
 
