@@ -37,12 +37,19 @@ io.on("connection", (socket) => {
         io.emit("updatePlayers", { players, scores, currentJudge });
     });
 
-    // **NEW: Handle link submission**
+    // Handle link submission
     socket.on("submitLink", (data) => {
         submittedLinks.push({ player: data.playerName, link: data.link });
 
-        // Notify the judge that links are submitted
+        // Notify the judge how many links have been submitted
         io.to(currentJudge).emit("linksSubmitted", { count: submittedLinks.length });
+
+        // If all players except the judge have submitted, pick a random link
+        if (submittedLinks.length === players.length - 1) {
+            const randomLink = submittedLinks[Math.floor(Math.random() * submittedLinks.length)];
+            
+            io.to(currentJudge).emit("showLink", { link: randomLink.link });
+        }
     });
 
     socket.on("disconnect", () => {
