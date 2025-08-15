@@ -25,6 +25,25 @@
     --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.3);
 }
 
+/* Fullscreen overlays: loading + welcome */
+#loading-screen,
+#welcome-screen {
+    position: fixed;
+    inset: 0;            /* top:0; right:0; bottom:0; left:0 */
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* keep their backgrounds */
+#loading-screen { background: var(--gradient-1); }
+#welcome-screen { background: var(--gradient-2); padding: 20px; }
+
+
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background: var(--dark-bg);
@@ -241,17 +260,23 @@ body {
 }
 
 .game-content {
-    display: flex;
-    flex: 1;
-    height: calc(100vh - var(--header-h));
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    height: calc(100vh - 80px);
+    width: 100%;
 }
 
+/* tweak existing .sidebar */
 .sidebar {
-    width: 300px;
+    width: auto;                 /* grid sets the column width */
     background: var(--dark-surface);
     border-right: 1px solid var(--border);
-    padding: 0;
+    padding: 16px;               /* slightly tighter padding */
     overflow-y: auto;
+
+    display: grid;               /* so we can control vertical packing */
+    align-content: start;        /* keep “Players” + cards at the top */
+    row-gap: 16px;               /* space between sections */
 }
 
 .main-view {
@@ -275,6 +300,7 @@ body {
     flex-direction: column;
     gap: 12px;
     margin-bottom: 30px;
+    width: 100%;
 }
 
 .player-card {
@@ -345,6 +371,7 @@ body {
     border-radius: 12px;
     padding: 20px;
     margin-bottom: 20px;
+    width: 100%;
 }
 
 .status-card h4 {
@@ -965,6 +992,7 @@ body {
     
     .player-card {
         min-width: 200px;
+        width: 100%;
     }
 }
 
