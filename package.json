@@ -1,0 +1,20 @@
+{
+    "name": "clickbait-game",
+    "version": "1.0.0",
+    "description": "A modern multiplayer Wikipedia guessing game",
+    "main": "backend/server.js",
+    "scripts": {
+        "start": "node backend/server.js",
+        "dev": "node backend/server.js"
+    },
+    "dependencies": {
+        "express": "^4.18.2",
+        "socket.io": "^4.7.2"
+    },
+    "engines": {
+        "node": ">=14.0.0"
+    },
+    "keywords": ["game", "multiplayer", "wikipedia", "guessing", "realtime"],
+    "author": "Your Name",
+    "license": "MIT"
+}

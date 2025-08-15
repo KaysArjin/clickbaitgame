@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clickbait - Multiplayer Wikipedia Game</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <div id="loading-screen" class="screen">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <h2>Connecting to Clickbait...</h2>
+            <p>Establishing connection</p>
+        </div>
+    </div>
+
+    <div id="welcome-screen" class="screen hidden">
+        <div class="welcome-content">
+            <div class="logo">
+                <h1><i class="fas fa-bullseye"></i> Clickbait</h1>
+                <p class="tagline">The Ultimate Wikipedia Guessing Game</p>
+            </div>
+            
+            <div class="game-rules">
+                <h3><i class="fas fa-info-circle"></i> How to Play</h3>
+                <ul>
+                    <li><strong>Judge:</strong> One player judges each round</li>
+                    <li><strong>Submit:</strong> Players anonymously submit Wikipedia links</li>
+                    <li><strong>Guess:</strong> Judge asks questions and guesses who submitted the selected link</li>
+                    <li><strong>Score:</strong> Correct guess = 1 point each, wrong guess = 2 points to submitter</li>
+                </ul>
+            </div>
+
+            <div class="join-form">
+                <h3>Join Game</h3>
+                <div class="input-group">
+                    <input type="text" id="player-name" placeholder="Enter your name" maxlength="20">
+                    <button id="join-btn" class="primary-btn">
+                        <i class="fas fa-play"></i> Join Game
+                    </button>
+                </div>
+                <div id="join-error" class="error-message hidden"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="game-screen" class="screen hidden">
+
+        <header class="game-header">
+            <div class="header-left">
+                <h1><i class="fas fa-bullseye"></i> Clickbait</h1>
+                <div class="round-info">
+                    <span id="round-number">Round 1</span>
+                    <span id="phase-indicator">Lobby</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <button id="stats-btn" class="icon-btn" title="View Statistics">
+                    <i class="fas fa-chart-bar"></i>
+                </button>
+                <button id="settings-btn" class="icon-btn" title="Game Settings">
+                    <i class="fas fa-cog"></i>
+                </button>
+                <button id="menu-btn" class="icon-btn" title="Menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </header>
+
+
+        <div class="game-content">
+
+            <aside class="sidebar">
+                <div class="players-section">
+                    <h3><i class="fas fa-users"></i> Players</h3>
+                    <div id="players-list" class="players-list"></div>
+                </div>
+
+                <div class="game-info">
+                    <div class="status-card">
+                        <h4>Game Status</h4>
+                        <p id="status-text">Waiting in lobby</p>
+                        <div id="progress-info" class="progress-info hidden">
+                            <div class="progress-bar">
+                                <div id="progress-fill" class="progress-fill"></div>
+                            </div>
+                            <span id="progress-text">0/0 submitted</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            
+            <main class="main-view">
+
+                <div id="lobby-view" class="view-panel active">
+                    <div class="welcome-message">
+                        <h2>Welcome to the Game!</h2>
+                        <p>Waiting for the judge to start a round...</p>
+                    </div>
+                    
+                    <div class="lobby-actions">
+                        <button id="start-round-btn" class="primary-btn large-btn hidden">
+                            <i class="fas fa-play"></i> Start Round
+                        </button>
+                        <p class="help-text">Need at least 2 non-judge players to start</p>
+                    </div>
+                    
+                    <div class="recent-activity">
+                        <h3>Recent Activity</h3>
+                        <div id="activity-feed" class="activity-feed"></div>
+                    </div>
+                </div>
+
+
+                <div id="submission-view" class="view-panel">
+                    <div class="submission-header">
+                        <h2><i class="fas fa-link"></i> Submit Your Wikipedia Link</h2>
+                        <p>Choose an interesting Wikipedia article that might stump the judge!</p>
+                    </div>
+                    
+                    <div class="submission-form">
+                        <div class="input-group">
+                            <div class="input-wrapper">
+                                <i class="fas fa-globe"></i>
+                                <input type="url" id="wiki-link" placeholder="https://en.wikipedia.org/wiki/...">
+                            </div>
+                            <button id="submit-link-btn" class="primary-btn">
+                                <i class="fas fa-paper-plane"></i> Submit
+                            </button>
+                        </div>
+                        <div class="submission-tips">
+                            <h4>Tips for Good Submissions:</h4>
+                            <ul>
+                                <li>Choose obscure but interesting topics</li>
+                                <li>Avoid overly obvious or famous subjects</li>
+                                <li>Pick articles you know something about</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div id="submission-status" class="status-card hidden">
+                        <i class="fas fa-check-circle"></i>
+                        <h3>Link Submitted!</h3>
+                        <p>Waiting for other players to submit their links...</p>
+                    </div>
+                </div>
+
+
+                <div id="judging-view" class="view-panel">
+                    <div class="judging-header">
+                        <h2><i class="fas fa-gavel"></i> Time to Judge!</h2>
+                        <p>Here's the randomly selected Wikipedia link. Ask questions and make your guess!</p>
+                    </div>
+                    
+                    <div class="selected-link-card">
+                        <div class="link-preview">
+                            <i class="fab fa-wikipedia-w"></i>
+                            <div class="link-info">
+                                <h3 id="selected-title">Loading...</h3>
+                                <a id="selected-url" href="#" target="_blank" rel="noopener">
+                                    <i class="fas fa-external-link-alt"></i> Open Article
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="judge-actions" class="judge-actions hidden">
+                        <h3>Who do you think submitted this link?</h3>
+                        <div id="guess-buttons" class="guess-buttons"></div>
+                    </div>
+                    
+                    <div id="waiting-judge" class="waiting-message">
+                        <i class="fas fa-hourglass-half"></i>
+                        <p>Waiting for the judge to make their decision...</p>
+                    </div>
+                </div>
+
+
+                <div id="results-view" class="view-panel">
+                    <div class="results-header">
+                        <h2><i class="fas fa-trophy"></i> Round Results</h2>
+                    </div>
+                    
+                    <div id="round-results" class="results-content"></div>
+                    
+                    <div class="round-actions">
+                        <button id="next-round-btn" class="primary-btn hidden">
+                            <i class="fas fa-forward"></i> Next Round
+                        </button>
+                        <button id="view-all-submissions-btn" class="secondary-btn">
+                            <i class="fas fa-list"></i> View All Submissions
+                        </button>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+
+    <div id="stats-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-chart-bar"></i> Game Statistics</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="stats-content"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="settings-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-cog"></i> Game Settings</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-section">
+                    <label>
+                        <span>Max Players:</span>
+                        <input type="number" id="max-players" min="3" max="12" value="8">
+                    </label>
+                    <label>
+                        <span>Points for Correct Guess:</span>
+                        <input type="number" id="correct-points" min="1" max="5" value="1">
+                    </label>
+                    <label>
+                        <span>Points for Fooling Judge:</span>
+                        <input type="number" id="fooling-points" min="1" max="5" value="2">
+                    </label>
+                </div>
+                <div class="modal-actions">
+                    <button id="save-settings-btn" class="primary-btn">Save Settings</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="menu-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-bars"></i> Game Menu</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="menu-options">
+                    <button id="reset-game-btn" class="danger-btn">
+                        <i class="fas fa-refresh"></i> Reset Game
+                    </button>
+                    <button id="leave-game-btn" class="secondary-btn">
+                        <i class="fas fa-sign-out-alt"></i> Leave Game
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
