@@ -25,11 +25,10 @@
     --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.3);
 }
 
-/* Fullscreen overlays: loading + welcome */
 #loading-screen,
 #welcome-screen {
     position: fixed;
-    inset: 0;            /* top:0; right:0; bottom:0; left:0 */
+    inset: 0;
     width: 100vw;
     height: 100vh;
     display: flex;
@@ -39,7 +38,6 @@
     transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
-/* keep their backgrounds */
 #loading-screen { background: var(--gradient-1); }
 #welcome-screen { background: var(--gradient-2); padding: 20px; }
 
@@ -266,17 +264,16 @@ body {
     width: 100%;
 }
 
-/* tweak existing .sidebar */
 .sidebar {
-    width: auto;                 /* grid sets the column width */
+    width: auto;
     background: var(--dark-surface);
     border-right: 1px solid var(--border);
-    padding: 16px;               /* slightly tighter padding */
+    padding: 16px;
     overflow-y: auto;
 
-    display: grid;               /* so we can control vertical packing */
-    align-content: start;        /* keep “Players” + cards at the top */
-    row-gap: 16px;               /* space between sections */
+    display: grid;
+    align-content: start;
+    row-gap: 16px;
 }
 
 .main-view {

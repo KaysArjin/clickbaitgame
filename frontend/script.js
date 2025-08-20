@@ -53,7 +53,8 @@ class ClickbaitGame {
             waitingJudge: document.getElementById('waiting-judge'),
             roundResults: document.getElementById('round-results'),
             nextRoundBtn: document.getElementById('next-round-btn'),
-            viewAllSubmissionsBtn: document.getElementById('view-all-submissions-btn')
+            viewAllSubmissionsBtn: document.getElementById('view-all-submissions-btn'),
+            randomLinkBtn: document.getElementById('random-link-btn')
         };
 
         this.modals = {
@@ -75,7 +76,10 @@ class ClickbaitGame {
             this.socket.emit('start-round');
         });
 
+        this.elements.randomLinkBtn.addEventListener('click', () => this.generateRandomLink());
+
         this.elements.submitLinkBtn.addEventListener('click', () => this.submitLink());
+
         this.elements.wikiLink.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') this.submitLink();
         });
@@ -249,6 +253,33 @@ class ClickbaitGame {
         }
         
         this.socket.emit('submit-link', { link });
+    }
+
+    async generateRandomLink() {
+        try {
+            this.elements.randomLinkBtn.disabled = true;
+            this.elements.randomLinkBtn.innerHTML = '<i class="fas fa-dice"></i> Random';
+
+            const resp = await fetch ('https://en.wikipedia.org/w/api.php?action=query&list=random&format=json&rnnamespace=0&rnlimit=1&origin=*');
+            const data = await resp.json();
+            const page = data?.query?.random?.[0];
+            const title = page?.title;
+
+            if (!page) throw new Error ('No Random page found');
+
+            const url = `https://en.wikipedia.org/wiki/${encodeURIComponent(page.title.replace(/ /g, '_'))}`;
+
+            this.elements.wikiLink.value = url;
+
+            window.open(url, '_blank');
+
+        } catch (err) {
+            console.error('Randomlink error:', err);
+            this.showToast(`Could not fetch a random article: ${String(err.message || err)}`, 'error');
+        } finally {
+            this.elements.randomLinkBtn.disabled = false;
+            this.elements.randomLinkBtn.innerHTML = '<i class="fas fa-dice"></i> Random';
+        }
     }
 
     makeGuess(playerId) {
